@@ -28,5 +28,6 @@ class TrackerOverTime(context: SQLContext, inputDF: DataFrame) extends Query(con
                 sum(swarmStats("noleech")).as('noleech),
                 sum(swarmStats("sampleCount")).as('sampleCount))
 
+    return trackerOverTime
  }
 }
