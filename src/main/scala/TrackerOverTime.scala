@@ -10,7 +10,7 @@ class TrackerOverTime(context: SQLContext, inputDF: DataFrame) extends Query(con
   override def name: String = "TrackerOverTime"
 
 
-  override def execute() {
+  override def execute(): DataFrame = {
     import context.implicits._
 
     val fullScrapes = inputDF.select('hash, 'tracker, Utils.TIMEGROUP('ts).as('tg), 'seeders, 'leechers, 'downloads)

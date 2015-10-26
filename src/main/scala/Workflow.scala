@@ -22,7 +22,7 @@ object Workflow {
 
 
     val trackerOverTime = new TrackerOverTime(sqlContext, inputScrapes)
-    trackerOverTime.execute()
+    trackerOverTime.execute().rdd.saveAsTextFile(args(1) + "/TrackerOverTime")
   }
 
 }
