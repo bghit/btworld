@@ -8,5 +8,5 @@ abstract class Query (context: SQLContext, inputRDD: DataFrame) {
 
   def name: String
 
-  def execute()
+  def execute() : DataFrame
 }

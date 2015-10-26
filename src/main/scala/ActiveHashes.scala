@@ -9,7 +9,7 @@ class ActiveHashes(context: SQLContext, inputDF: DataFrame) extends Query(contex
   override def name: String = "TrackerOverTime"
 
 
-  override def execute() {
+  override def execute(): DataFrame = {
     import context.implicits._
 
     val activeHashes = inputDF.select('hash, Utils.TIMEGROUP('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
