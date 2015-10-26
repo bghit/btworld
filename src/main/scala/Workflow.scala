@@ -23,6 +23,8 @@ object Workflow {
 
     val trackerOverTime = new TrackerOverTime(sqlContext, inputScrapes)
     trackerOverTime.execute().rdd.saveAsTextFile(args(1) + "/TrackerOverTime")
+    val activeHashes = new ActiveHashes(sqlContext, inputScrapes)
+    activeHashes.execute().rdd.saveAsTextFile(args(1) + "/ActiveHashes")
   }
 
 }
