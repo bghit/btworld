@@ -20,6 +20,12 @@ object Utils {
     return sdf.format(cal.getTime(), new StringBuffer(), new FieldPosition(0)).toString
   }
 
-  val TIMEGROUP = udf((ts: String) => Utils.convert(ts))
+  val timegroup = udf((ts: String) => Utils.convert(ts))
+
+  val ratio = udf((A: Float, B: Float) => if (B == 0) A else A / B)
+
+  val noSeed = udf((seeders: Long, leechers: Long) => if (seeders == 0 && leechers > 0) 1 else 0)
+
+  val noLeech = udf((seeders: Long, leechers: Long) => if (seeders > 0 && leechers == 0) 1 else 0)
 
 }

@@ -12,7 +12,7 @@ class ActiveHashes(context: SQLContext, inputDF: DataFrame) extends Query(contex
   override def execute(): DataFrame = {
     import context.implicits._
 
-    val activeHashes = inputDF.select('hash, Utils.TIMEGROUP('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
+    val activeHashes = inputDF.select('hash, Utils.timegroup('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
 
     return activeHashes
   }

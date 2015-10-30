@@ -13,13 +13,17 @@ class TrackerOverTime(context: SQLContext, inputDF: DataFrame) extends Query(con
   override def execute(): DataFrame = {
     import context.implicits._
 
-    val fullScrapes = inputDF.select('hash, 'tracker, Utils.TIMEGROUP('ts).as('tg), 'seeders, 'leechers, 'downloads)
+    val totScrapes = inputDF.select('hash, 'tracker, Utils.timegroup('ts).as('tg),
+                              ('seeders+'leechers).as('sessions),
+                              Utils.ratio('seeders, 'leechers).as('slratio),
+                              Utils.noSeed('seeders, 'leechers).as('noseed),
+                              Utils.noLeech('seeders, 'leechers).as('noleech))
 
-    val swarmStats = inputDF.groupBy('hash, 'tracker, Utils.TIMEGROUP('ts))
-                            .agg('tracker, Utils.TIMEGROUP('ts).as('tg), avg('seeders+'leechers).as('sessions),
-                              count('seeders === 0).as('noseed),
-                              count('leechers === 0).as('noleech),
-                              count("*").as('sampleCount))
+    val swarmStats = totScrapes.groupBy('hash, 'tracker, 'tg)
+                            .agg('tracker, 'tg, avg('sessions).as('sessions),
+                             sum('noseed).as('noseed),
+                             sum('noleech).as('noleech),
+                             count("*").as('sampleCount))
 
     val trackerOverTime = swarmStats.groupBy('tracker, 'tg)
               .agg('tracker, 'tg, count("*").as('hashcount),
