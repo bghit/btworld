@@ -4,17 +4,22 @@ import org.apache.spark.sql.functions._
 /**
  * Created by bogdan on 10/26/15.
  */
-class ActiveHashes(context: SQLContext, inputDF: DataFrame) extends Query(context: SQLContext, inputDF) {
 
-  override def name: String = "TrackerOverTime"
+class ActiveHashes(context: SQLContext) extends Query {
 
+  override var outputDF: DataFrame = _
 
-  override def execute(): DataFrame = {
+  override def execute(inputDF: DataFrame) = {
     import context.implicits._
 
-    val activeHashes = inputDF.select('hash, Utils.timegroup('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
-
-    return activeHashes
+    outputDF = inputDF.select('hash, Utils.timegroup('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
   }
 
+  override def save(path: String) = {
+    outputDF.rdd.saveAsTextFile(path+"/"+this.getClass.getName)
+  }
+
+  override def cache() = {
+    outputDF.cache()
+  }
 }

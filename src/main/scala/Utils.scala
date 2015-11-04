@@ -3,7 +3,18 @@ import java.util.Calendar
 
 import org.apache.spark.sql.functions._
 
+case class Scrape(tracker: String, tg: String, sessions: Double) extends Ordered[Scrape] {
+  def compare(that: Scrape) = sessions.compare(that.sessions)
+
+  override def toString() = {
+    tracker + " " + tg +  " " + sessions
+  }
+}
+
 object Utils {
+
+  def TOP_K_RECORDS = 10
+
   def convert(ts: String): String = {
     if (ts == null)
       return null

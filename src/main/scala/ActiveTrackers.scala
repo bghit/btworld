@@ -14,4 +14,11 @@ class ActiveTrackers(context: SQLContext) extends Query {
 
   }
 
+  override def save(path: String) = {
+    outputDF.rdd.saveAsTextFile(path+"/"+this.getClass.getName)
+  }
+
+  override def cache() = {
+    outputDF.cache()
+  }
 }

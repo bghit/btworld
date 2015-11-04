@@ -1,12 +1,16 @@
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.DataFrame
 
 /**
- * Created by bogdan on 10/26/15.
+ * Created by Bogdan Ghit on 10/26/15.
  */
 
-abstract class Query (context: SQLContext, inputRDD: DataFrame) {
+trait Query {
 
-  def name: String
+  var outputDF: DataFrame
 
-  def execute() : DataFrame
+  def execute(inputDF: DataFrame)
+
+  def save(path: String)
+
+  def cache()
 }
