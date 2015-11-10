@@ -13,9 +13,9 @@ class TopKTrackersLocal(context: SQLContext) extends Query with Serializable {
   override def execute(inputDF: DataFrame) = {
     import context.implicits._
 
-    outputDF = inputDF.select('tracker, 'tg, 'sessions)
+    var auxDF = inputDF.select('tracker, 'tg, 'sessions)
 
-    output = outputDF.rdd.map(p => (p(1), Scrape(p.getString(0), p.getString(1), p.getDouble(2))))
+    outputDF = auxDF.rdd.map(p => (p(1), Scrape(p.getString(0), p.getString(1), p.getLong(2))))
       .combineByKey[TopKRank](
       createCombiner = (s: Scrape) => {
          var top = new TopKRank
@@ -31,7 +31,7 @@ class TopKTrackersLocal(context: SQLContext) extends Query with Serializable {
       mergeCombiners = (topa: TopKRank, topb: TopKRank) => {
          var top = new TopKRank
          top.merge(topa, topb)
-      }).map(_._2.queue.toArray).flatMap(x => x)
+      }).map(_._2.queue.toArray).flatMap(x => x).toDF()
   }
 
 

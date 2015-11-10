@@ -27,21 +27,30 @@ object Workflow {
     trackerOverTime.execute(inputScrapes)
     trackerOverTime.cache()
 
-    val activeTrackers = new ActiveTrackers(sqlContext)
-    activeTrackers.execute(trackerOverTime.outputDF)
-    activeTrackers.save(args(1))
-
-    val activeSwarms = new ActiveSwarms(sqlContext)
-    activeSwarms.execute(trackerOverTime.outputDF)
-    activeSwarms.save(args(1))
-
     val topKTrackersLocal = new TopKTrackersLocal(sqlContext)
     topKTrackersLocal.execute(trackerOverTime.outputDF)
     topKTrackersLocal.save(args(1))
 
-    val activeHashes = new ActiveHashes(sqlContext)
+    val topKTrackersGlobal = new TopKTrackersGlobal(sqlContext)
+    topKTrackersGlobal.execute(topKTrackersLocal.outputDF)
+    topKTrackersGlobal.save(args(1))
+    topKTrackersGlobal.outputDF.show(10)
+
+    /*val activeTrackers = new ActiveTrackers(sqlContext)
+    activeTrackers.execute(trackerOverTime.outputDF)
+    activeTrackers.save(args(1))
+
+    activeTrackers.outputDF
+    val activeSwarms = new ActiveSwarms(sqlContext)
+    activeSwarms.execute(trackerOverTime.outputDF)
+    activeSwarms.save(args(1))*/
+
+
+    /*val activeHashes = new ActiveHashes(sqlContext)
     activeHashes.execute(inputScrapes)
-    activeHashes.save(args(1))
+    activeHashes.save(args(1))*/
+
+
   }
 
 }

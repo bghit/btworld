@@ -3,13 +3,14 @@ import java.util.Calendar
 
 import org.apache.spark.sql.functions._
 
-case class Scrape(tracker: String, tg: String, sessions: Double) extends Ordered[Scrape] {
+case class Scrape(tracker: String, tg: String, sessions: Long) extends Ordered[Scrape] {
   def compare(that: Scrape) = sessions.compare(that.sessions)
 
   override def toString() = {
     tracker + " " + tg +  " " + sessions
   }
 }
+
 
 object Utils {
 
@@ -39,4 +40,7 @@ object Utils {
 
   val noLeech = udf((seeders: Long, leechers: Long) => if (seeders > 0 && leechers == 0) 1 else 0)
 
+  val filter = udf((sessions: Double) => if (sessions < 10000) sessions else 0)
+
+  val toLong = udf((s: Double) => s.toLong)
 }

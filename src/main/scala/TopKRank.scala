@@ -1,12 +1,12 @@
 /**
  * Created by Bogdan Ghit on 11/2/15.
- * 
+ *
  */
 
 
 class TopKRank extends java.io.Serializable {
 
-  var queue = new MyPriorityQueue[Scrape](Utils.TOP_K_RECORDS)
+  var queue = new BoundedPriorityQueue[Scrape](Utils.TOP_K_RECORDS)
 
   def insert(s: Scrape) = {
     queue += s

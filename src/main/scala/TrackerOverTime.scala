@@ -1,5 +1,5 @@
-import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.functions._
 
 /**
  * Created by Bogdan Ghit on 10/26/15.
@@ -20,18 +20,17 @@ class TrackerOverTime(context: SQLContext) extends Query {
                               Utils.noLeech('seeders, 'leechers).as('noleech))
 
     val swarmStats = totScrapes.groupBy('hash, 'tracker, 'tg)
-                            .agg('tracker, 'tg, avg('sessions).as('sessions),
+                            .agg(Utils.toLong(avg('sessions)).as('sessions),
                              sum('noseed).as('noseed),
                              sum('noleech).as('noleech),
                              count("*").as('sampleCount))
 
     outputDF = swarmStats.groupBy('tracker, 'tg)
-              .agg('tracker, swarmStats("tg"), count("*").as('hashcount),
-                sum(swarmStats("sessions")).as('sessions),
-                sum(swarmStats("noseed")).as('noseed),
-
-                sum(swarmStats("noleech")).as('noleech),
-                sum(swarmStats("sampleCount")).as('sampleCount))
+              .agg(count("*").as('hashcount),
+              sum('sessions).as('sessions),
+              sum('noseed).as('noseed),
+              sum('noleech).as('noleech),
+              sum('sampleCount).as('sampleCount))
   }
 
   override def save(path: String) = {
