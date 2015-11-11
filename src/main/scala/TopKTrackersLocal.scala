@@ -40,7 +40,7 @@ class TopKTrackersLocal(context: SQLContext) extends Query with Serializable {
   }
 
   override def cache() = {
-    output.cache()
+    outputDF.cache()
   }
 }
 

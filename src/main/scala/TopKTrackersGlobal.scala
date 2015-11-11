@@ -35,7 +35,7 @@ class TopKTrackersGlobal(context: SQLContext) extends Query with Serializable {
         mergeCombiners = (topa: TopKRank, topb: TopKRank) => {
           var top = new TopKRank
           top.merge(topa, topb)
-        }).map(_._2.queue.toArray).flatMap(x => x).toDF()
+        }).map(_._2.queue.toArray).flatMap(x => x).toDF().select('tracker, 'sessions)
 
   }
 
