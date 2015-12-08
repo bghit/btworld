@@ -10,6 +10,8 @@ trait Query {
 
   def execute(inputDF: DataFrame)
 
+  def execute(inputDF: DataFrame, fullInputDF: DataFrame)
+
   def save(path: String)
 
   def cache()

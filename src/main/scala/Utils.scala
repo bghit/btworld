@@ -12,6 +12,7 @@ case class Scrape(tracker: String, tg: String, sessions: Long) extends Ordered[S
 }
 
 
+
 object Utils {
 
   def TOP_K_RECORDS = 10
@@ -40,7 +41,13 @@ object Utils {
 
   val noLeech = udf((seeders: Long, leechers: Long) => if (seeders > 0 && leechers == 0) 1 else 0)
 
-  val filter = udf((sessions: Double) => if (sessions < 10000) sessions else 0)
+  val filter = udf((sessions: Double) => if (sessions < Long.MaxValue && sessions > Long.MinValue) sessions else 0)
 
   val toLong = udf((s: Double) => s.toLong)
+
+  def guard(s: String): Long = {
+    if (s == null || s == "None")
+	return 0L
+    else return s.toLong
+  }
 }

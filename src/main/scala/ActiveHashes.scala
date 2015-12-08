@@ -11,7 +11,7 @@ class ActiveHashes(context: SQLContext) extends Query {
 
   override def execute(inputDF: DataFrame) = {
     import context.implicits._
-
+    context.sql("SET spark.sql.shuffle.partitions=50")
     outputDF = inputDF.select('hash, Utils.timegroup('ts).as('tg)).distinct.groupBy('tg).agg('tg, count('hash))
   }
 
@@ -21,5 +21,9 @@ class ActiveHashes(context: SQLContext) extends Query {
 
   override def cache() = {
     outputDF.cache()
+  }
+
+  override def execute(inputDF: DataFrame, fullInputDF: DataFrame): Unit = {
+
   }
 }

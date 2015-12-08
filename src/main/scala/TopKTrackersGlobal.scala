@@ -15,11 +15,10 @@ class TopKTrackersGlobal(context: SQLContext) extends Query with Serializable {
 
   override def execute(inputDF: DataFrame): Unit = {
     import context.implicits._
+    //context.sql("SET spark.sql.shuffle.partitions=4")
 
     val auxDF = inputDF.select('tracker, 'sessions).groupBy('tracker).agg(max('sessions).as('sessions))
-
-
-   outputDF = auxDF.rdd.map(p => (p(0), Scrape(p.getString(0), "", p.getLong(1))))
+    outputDF = auxDF.rdd.map(p => (p(0), Scrape(p.getString(0), "", p.getLong(1))))
       .combineByKey[TopKRank](
         createCombiner = (s: Scrape) => {
           var top = new TopKRank
@@ -41,5 +40,9 @@ class TopKTrackersGlobal(context: SQLContext) extends Query with Serializable {
 
   override def save(path: String): Unit = {
     outputDF.rdd.saveAsTextFile(path+"/"+this.getClass.getName)
+  }
+
+  override def execute(inputDF: DataFrame, fullInputDF: DataFrame): Unit = {
+
   }
 }

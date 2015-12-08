@@ -9,6 +9,7 @@ class ActiveTrackers(context: SQLContext) extends Query {
 
   override def execute(inputDF: DataFrame) = {
     import context.implicits._
+    //context.sql("SET spark.sql.shuffle.partitions=1")
 
     outputDF = inputDF.select('tracker, 'tg).groupBy('tg).agg('tg, count("*").as("trackers"))
 
@@ -20,5 +21,9 @@ class ActiveTrackers(context: SQLContext) extends Query {
 
   override def cache() = {
     outputDF.cache()
+  }
+
+  override def execute(inputDF: DataFrame, fullInputDF: DataFrame): Unit = {
+
   }
 }

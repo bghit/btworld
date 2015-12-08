@@ -41,4 +41,7 @@ class TrackerOverTime(context: SQLContext) extends Query {
     outputDF.cache()
   }
 
+  override def execute(inputDF: DataFrame, fullInputDF: DataFrame): Unit = {
+
+  }
 }
