@@ -3,8 +3,11 @@
 DIR="$(cd "`dirname "$0"`"; pwd)"
 JAR=target/scala-2.10/btworld_2.10-0.1.jar
 
-MASTER=$1
 APPLICATION="Workflow"
+
+MASTER=$1
+APP=$2
+WHICH=$3
 
 function exit_with_usage {
   echo "Usage:"
@@ -18,15 +21,17 @@ if [ -d $MASTER ]; then
    exit_with_usage
 fi
 
-HDFS=hdfs://$MASTER.ib.cluster:54321
+HDFS=hdfs://${MASTER}.ib.cluster:54321
 
-INPUT=$HDFS/Scrapes/btworld/*
+INPUT=$HDFS/Scrapes/btworld-$WHICH/*
 OUTPUT=$HDFS/results
-DIR=$HDFS/checkpoint
 
-$HADOOP_HOME/bin/hdfs dfs -rmr $OUTPUT $DIR
+STABLE=$HDFS/checkpoint
 
-$SPARK_HOME/bin/spark-submit --class "$APPLICATION" $JAR $INPUT $OUTPUT $DIR\
-                   --master spark://$MASTER.cm.cluster:7077 \
-                   --deploy-mode cluster \
-                   --driver-memory 10g
+$HADOOP_HOME/bin/hdfs dfs -rmr $OUTPUT $STABLE
+
+$SPARK_HOME/bin/spark-submit --class "$APPLICATION" $JAR $APP $INPUT $OUTPUT $STABLE \
+		   --master spark://${MASTER}.ib.cluster:7077 \
+		   --deploy-mode cluster \
+		   --driver-memory 10g
+
